@@ -1,0 +1,1 @@
+MAINMENU, SETTIME, GETTIME = range(3)
