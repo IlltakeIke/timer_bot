@@ -19,8 +19,11 @@ def create_table():
                                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                                 datetime DATETIME,
                                                 user_id INTEGER,
+                                                message TEXT,
+                                                active INTEGER DEFAULT 1,
+                                                notif INTEGER, 
                                                 FOREIGN KEY (user_id) REFERENCES users (id)
-                                                    )''')
+                                                    )''')#24 строка это чойз 
                                                     
     conn.commit()
     conn.close()
@@ -28,16 +31,21 @@ def create_table():
 def create_user(id_tg, name):
     conn = sqlite3.connect("timer_bot.db")
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO users (id, name) VALUES ({id_tg}, '{name}')")
-    conn.commit()
+    cur.execute(f'SELECT id FROM users WHERE id = {id_tg}')
+    user = cur.fetchone() # (id,) | None
+    if not user: 
+        cur.execute(f"INSERT INTO users (id, name) VALUES ({id_tg}, '{name}')")
+        conn.commit()
     conn.close()
 
-def create_timer(id_tg, timer_datetime):
+def create_timer(id_tg, timer_datetime, message):
     conn = sqlite3.connect("timer_bot.db")
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO timers (datetime, user_id) VALUES ('{timer_datetime}', {id_tg})")
+    cur.execute(f"INSERT INTO timers (datetime, user_id, message) VALUES ('{timer_datetime}', {id_tg}, '{message}')")
+    id_timer = cur.lastrowid
     conn.commit()
     conn.close()
+    return id_timer
 
 def update_users(user_id):
     conn = sqlite3.connect("timer_bot.db")
@@ -55,4 +63,11 @@ def get_all_timers():
     users_data = cur.fetchall() #в юзере картеж(0,)
     conn.close()
     return users_data
-    
+
+def active(id_timer):
+    conn = sqlite3.connect("timer_bot.db")
+    cur = conn.cursor()
+    cur.execute(f'UPDATE timers SET active = {0} WHERE id = {id_timer}')
+    conn.commit()
+    conn.close()
+    return True

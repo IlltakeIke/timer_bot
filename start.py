@@ -5,15 +5,12 @@ import datetime
 
 from states import MAINMENU 
 from bd import create_user, create_timer
+from logging_file import logger
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # timer = datetime.datetime.now() + datetime.timedelta(days=1, hours = 2) 
-
-    # create_user(update.effective_user.id, update.effective_user.name)
-    # create_timer(update.effective_user.id, timer.strftime('%Y-%m-%d %H:%M:%S'))
-    
-    print(update.effective_user.name)
+    create_user(update.effective_user.id, update.effective_user.name)
+    logger.info(f'Пользователь {update.effective_user.id} запустил бота')
     TimeOfDay = datetime.datetime.now().hour
     if TimeOfDay <= 5: 
         TimeOfDay = "Доброе утро"
