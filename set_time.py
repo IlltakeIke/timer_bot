@@ -15,12 +15,13 @@ from telegram.ext import (
 )
 
 import datetime
+import pytz
 
 from bd import create_user, create_timer
 from states import MAINMENU, SETTIME, GETDATE, GETTIME, GETMESS, CHOICE
 from all_jobs import send_all_notif
 from start import start
-from all_jobs import timer_call
+from all_jobs import timer_call, counter
 
 
 async def set_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -77,16 +78,13 @@ async def skip_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["full_date"] = full_date
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Введите сообщение для таймера или пропустите"  
-        #(\skip)
-    
-        
+        text="Введите сообщение для таймера или пропустите (/skip)"  
     )
     return GETMESS
 
 
 async def get_mess(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message = update.effective_user.text
+    message = update.effective_message.text
     context.user_data['message'] = message  
     keyboard = [
     [
@@ -130,14 +128,24 @@ async def choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     if query.data == 'yes':
-        await query.edit_message_text(text='А во сколько?')
-    else: 
+        await query.edit_message_text(text='Напишите во сколько вы хотите получать ежедневное уведомление?')
+    else:
+        time = '12:00'
+        context.user_data["time"] = time
         return await put_timer_to_bd(update, context)
     
 
-async def get_time_notif(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    ТУТ НАДО В КОНТЕКСТ СУНУТЬ ВРЕМЯ УВЕДОМЛЕНИЯ (ежедневного) 
-    
+async def get_time_notif(update: Update, context: ContextTypes.DEFAULT_TYPE): #жалуется на тайм 
+    time = update.effective_message.text
+    time = time[:2] + ":" + time[-2:]
+    time = time + ":" + "00"
+    context.user_data["time"] = time
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=f"Каждый день в {time[:-3]} будет отправляться уведомление",
+    )
+    await put_timer_to_bd(update, context)
+
 
 async def put_timer_to_bd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = context.user_data['message']
@@ -157,5 +165,11 @@ async def put_timer_to_bd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         },
         chat_id=update.effective_user.id,
     )
-    context.job_queue.run_daily(ФУНКЦИЮ_КОТОРАЯ_СКИДЫВАЕТ_СКОК_ДО_ДАТЫ/ПОСЛЕ, ВРЕМЯ когда слать, data={"full_date": point}, chat_id=update.effective_user.id, name=f'job_{id_timer}')
+    time_lst = list(map(int, context.user_data["time"].split(':')))
+    time = datetime.time(hour=time_lst[0], minute=time_lst[1], tzinfo=pytz.timezone('Etc/GMT-3'))
+    
+    context.job_queue.run_daily(counter, time, data={"full_date": point, 'message': message}, chat_id=update.effective_user.id, name=f'job_{id_timer}')
+    
+    
+    
     return await start(update, context)

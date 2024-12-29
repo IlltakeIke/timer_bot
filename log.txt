@@ -64,3 +64,81 @@ AttributeError: 'User' object has no attribute 'text'
 2024-12-17 20:37:05,486 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
 2024-12-17 20:37:05,486 - apscheduler.scheduler - INFO - Scheduler has been shut down
 2024-12-17 20:37:05,486 - telegram.ext.Application - INFO - Application.stop() complete
+2024-12-17 20:37:08,641 - apscheduler.scheduler - INFO - Scheduler started
+2024-12-17 20:37:08,641 - telegram.ext.Application - INFO - Application started
+2024-12-17 20:37:09,773 - logging_file - INFO - Пользователь 1618012640 запустил бота
+2024-12-19 12:21:41,757 - apscheduler.scheduler - INFO - Scheduler started
+2024-12-19 12:21:41,758 - telegram.ext.Application - INFO - Application started
+2024-12-19 12:21:45,343 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+2024-12-19 12:21:45,343 - apscheduler.scheduler - INFO - Scheduler has been shut down
+2024-12-19 12:21:45,343 - telegram.ext.Application - INFO - Application.stop() complete
+2024-12-19 12:21:51,231 - apscheduler.scheduler - INFO - Scheduler started
+2024-12-19 12:21:51,232 - telegram.ext.Application - INFO - Application started
+2024-12-19 13:59:15,646 - apscheduler.scheduler - INFO - Scheduler started
+2024-12-19 13:59:15,646 - telegram.ext.Application - INFO - Application started
+2024-12-22 19:04:49,197 - apscheduler.scheduler - INFO - Scheduler started
+2024-12-22 19:04:49,197 - telegram.ext.Application - INFO - Application started
+2024-12-22 19:05:07,931 - logging_file - INFO - Пользователь 1618012640 запустил бота
+2024-12-22 19:05:33,684 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+2024-12-22 19:05:33,684 - apscheduler.scheduler - INFO - Scheduler has been shut down
+2024-12-22 19:05:33,684 - telegram.ext.Application - INFO - Application.stop() complete
+2024-12-23 11:15:36,670 - apscheduler.scheduler - INFO - Scheduler started
+2024-12-23 11:15:36,686 - telegram.ext.Application - INFO - Application started
+2024-12-23 11:15:42,214 - logging_file - INFO - Пользователь 1618012640 запустил бота
+2024-12-23 11:15:55,012 - telegram.ext.Application - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "C:\programs\tgbots\timer_bot\.venv\Lib\site-packages\telegram\ext\_application.py", line 1319, in process_update
+    await coroutine
+  File "C:\programs\tgbots\timer_bot\.venv\Lib\site-packages\telegram\ext\_handlers\conversationhandler.py", line 844, in handle_update
+    new_state: object = await handler.handle_update(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\programs\tgbots\timer_bot\.venv\Lib\site-packages\telegram\ext\_handlers\basehandler.py", line 158, in handle_update
+    return await self.callback(update, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\programs\tgbots\timer_bot\set_time.py", line 89, in get_mess
+    message = update.effective_user.text
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'User' object has no attribute 'text'
+2024-12-23 11:16:50,616 - logging_file - INFO - Пользователь 1618012640 запустил бота
+2024-12-23 11:16:54,606 - logging_file - INFO - Пользователь 1618012640 запустил бота
+2024-12-23 14:13:44,121 - apscheduler.scheduler - INFO - Scheduler started
+2024-12-23 14:13:44,121 - telegram.ext.Application - INFO - Application started
+2024-12-23 14:13:54,034 - logging_file - INFO - Пользователь 1618012640 запустил бота
+2024-12-23 14:15:13,212 - telegram.ext.Application - INFO - Application is stopping. This might take a moment.
+2024-12-23 14:15:13,212 - apscheduler.scheduler - INFO - Scheduler has been shut down
+2024-12-23 14:15:13,212 - telegram.ext.Application - INFO - Application.stop() complete
+2024-12-23 14:15:15,821 - apscheduler.scheduler - INFO - Scheduler started
+2024-12-23 14:15:15,821 - telegram.ext.Application - INFO - Application started
+2024-12-23 14:15:58,969 - logging_file - INFO - Пользователь 1618012640 запустил бота
+2024-12-26 21:25:42,455 - apscheduler.scheduler - INFO - Scheduler started
+2024-12-26 21:25:42,456 - telegram.ext.Application - INFO - Application started
+2024-12-26 21:25:49,398 - logging_file - INFO - Пользователь 1618012640 запустил бота
+2024-12-26 21:26:03,532 - telegram.ext.Application - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "C:\programs\tgbots\timer_bot\.venv\Lib\site-packages\telegram\ext\_application.py", line 1319, in process_update
+    await coroutine
+  File "C:\programs\tgbots\timer_bot\.venv\Lib\site-packages\telegram\ext\_handlers\conversationhandler.py", line 844, in handle_update
+    new_state: object = await handler.handle_update(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\programs\tgbots\timer_bot\.venv\Lib\site-packages\telegram\ext\_handlers\basehandler.py", line 158, in handle_update
+    return await self.callback(update, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\programs\tgbots\timer_bot\set_time.py", line 86, in get_mess
+    message = update.effective_user.text
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'User' object has no attribute 'text'
+2024-12-26 21:27:34,274 - logging_file - INFO - Пользователь 1618012640 запустил бота
+2024-12-26 21:27:49,344 - telegram.ext.Application - ERROR - No error handlers are registered, logging exception.
+Traceback (most recent call last):
+  File "C:\programs\tgbots\timer_bot\.venv\Lib\site-packages\telegram\ext\_application.py", line 1319, in process_update
+    await coroutine
+  File "C:\programs\tgbots\timer_bot\.venv\Lib\site-packages\telegram\ext\_handlers\conversationhandler.py", line 844, in handle_update
+    new_state: object = await handler.handle_update(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\programs\tgbots\timer_bot\.venv\Lib\site-packages\telegram\ext\_handlers\basehandler.py", line 158, in handle_update
+    return await self.callback(update, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\programs\tgbots\timer_bot\set_time.py", line 86, in get_mess
+    message = update.effective_user.text
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'User' object has no attribute 'text'

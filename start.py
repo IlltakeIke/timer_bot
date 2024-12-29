@@ -22,7 +22,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         TimeOfDay = 'Доброй ночи'
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=f"{TimeOfDay}, {update.effective_user.username}! В этом боте ты сможешь выбрать отсчет до/от какого-то дня и получать ежедневное сообщение.\n\n/set_time - установать время"
+        text=f"{TimeOfDay}, {update.effective_user.username}! В этом боте ты сможешь выбрать отсчет до/от какого-то дня и получать ежедневное сообщение.\n\n/set_time - установать время\n/check - посмотреть свои даты"
     )
 
     return MAINMENU

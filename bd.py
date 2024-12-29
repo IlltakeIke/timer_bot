@@ -64,6 +64,14 @@ def get_all_timers():
     conn.close()
     return users_data
 
+def get_one_timers(user_id):
+    conn = sqlite3.connect("timer_bot.db")
+    cur = conn.cursor()
+    cur.execute(f'SELECT user_id, datetime FROM timers WHERE id = {user_id}')
+    users_data = cur.fetchall() #в юзере картеж(0,)
+    conn.close()
+    return users_data
+
 def active(id_timer):
     conn = sqlite3.connect("timer_bot.db")
     cur = conn.cursor()
@@ -71,3 +79,12 @@ def active(id_timer):
     conn.commit()
     conn.close()
     return True
+
+def check_timers(id_user):
+    conn = sqlite3.connect("timer_bot.db")
+    cur = conn.cursor()
+    cur.execute(f'SELECT message, id, datetime FROM timers WHERE user_id = {id_user} and datetime > CURRENT_TIMESTAMP')
+    user_timers = cur.fetchall()
+    conn.commit()
+    conn.close()
+    return user_timers

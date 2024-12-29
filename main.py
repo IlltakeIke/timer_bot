@@ -17,12 +17,13 @@ import datetime
 from dotenv import load_dotenv
 from states import MAINMENU, SETTIME, GETDATE, GETTIME, GETMESS, CHOICE
 from start import start
-from set_time import set_time, get_date, get_time, skip_time, get_mess, skip_mess, choice
+from set_time import set_time, get_date, get_time, skip_time, get_mess, skip_mess, choice, get_time_notif
 from constants import regular_data
 from bd import create_table
 import pytz
 from all_jobs import send_all_notif
 from logging_file import logger
+from check import check
 
 load_dotenv()
 
@@ -35,12 +36,13 @@ if __name__ == '__main__':
         entry_points=[CommandHandler("start", start)],
         states={
             MAINMENU: [
-                CommandHandler('set_time', set_time)
+                CommandHandler('set_time', set_time),
+                CommandHandler('check', check)
             ],
             GETDATE: [MessageHandler(filters.Regex(regular_data), get_date)],
             GETTIME: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_time), CommandHandler('skip', skip_time)],
             GETMESS: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_mess), CommandHandler('skip', skip_mess)],
-            CHOICE: [CallbackQueryHandler(choice)]
+            CHOICE: [CallbackQueryHandler(choice),MessageHandler(filters.TEXT & ~filters.COMMAND, get_time_notif)]
         },
         fallbacks=[CommandHandler("start", start)],
     )
