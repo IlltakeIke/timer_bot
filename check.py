@@ -26,7 +26,7 @@ from logging_file import logger
 from babel.dates import format_datetime
 
 async def check(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_timers = check_timers(update.effective_user.id)
+    user_timers = await check_timers(update.effective_user.id)
     text = ''
     i = 1
     for timer in user_timers:

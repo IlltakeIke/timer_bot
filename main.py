@@ -1,35 +1,35 @@
-import logging
 import os
-from telegram import Update
-from telegram.ext import (
-    ApplicationBuilder,
-    CommandHandler,
-    MessageHandler,
-    filters,
-    ConversationHandler,
-    CallbackQueryHandler,
-)
-from telegram.ext import (
-    ContextTypes,
-)
-import datetime
 
 from dotenv import load_dotenv
-from states import MAINMENU, SETTIME, GETDATE, GETTIME, GETMESS, CHOICE
-from start import start
-from set_time import set_time, get_date, get_time, skip_time, get_mess, skip_mess, choice, get_time_notif
-from constants import regular_data
+from telegram.ext import (
+    ApplicationBuilder,
+    CallbackQueryHandler,
+    CommandHandler,
+    ConversationHandler,
+    MessageHandler,
+    filters,
+)
+
 from bd import create_table
-import pytz
-from all_jobs import send_all_notif
-from logging_file import logger
 from check import check
+from constants import regular_data
+from set_time import (
+    choice,
+    get_date,
+    get_mess,
+    get_time,
+    get_time_notif,
+    set_time,
+    skip_mess,
+    skip_time,
+)
+from start import start
+from states import CHOICE, GETDATE, GETMESS, GETTIME, MAINMENU
+import asyncio
 
 load_dotenv()
 
-
-
-if __name__ == '__main__':
+def main():
     application = ApplicationBuilder().token(os.getenv('TOKEN')).build()
     
     conv_handler = ConversationHandler(
@@ -48,10 +48,14 @@ if __name__ == '__main__':
     )
 
     application.add_handler(conv_handler)
-    create_table()
     # ПРОВЕРКИ КАЖДЫЕ 12.00 
     # application.job_queue.run_daily(send_all_notif, time=datetime.time(hour=12, tzinfo=pytz.timezone('Etc/GMT-3')))
     # application.job_queue.run_once(send_all_notif, datetime.timedelta(seconds=5))
 
 
     application.run_polling()
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(create_table())
+    main()

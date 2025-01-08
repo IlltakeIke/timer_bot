@@ -9,7 +9,7 @@ from logging_file import logger
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    create_user(update.effective_user.id, update.effective_user.name)
+    await create_user(update.effective_user.id, update.effective_user.name)
     logger.info(f'Пользователь {update.effective_user.id} запустил бота')
     TimeOfDay = datetime.datetime.now().hour
     if TimeOfDay <= 5: 

@@ -24,7 +24,7 @@ from bd import get_one_timers, get_all_timers, active
 import pytz
 
 async def send_all_notif(context: ContextTypes.DEFAULT_TYPE):
-    users_data = get_all_timers()
+    users_data = await get_all_timers()
     for user, date in users_data:
         date_obj = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S') 
         date_now = datetime.datetime.now()
@@ -35,7 +35,7 @@ async def send_all_notif(context: ContextTypes.DEFAULT_TYPE):
     )
         
 async def send_one_notif(context: ContextTypes.DEFAULT_TYPE):
-    user, date = get_one_timers()
+    user, date = await get_one_timers()
     date_obj = datetime.datetime.strptime(date,'%Y-%m-%d %H:%M:%S') 
     date_now = datetime.datetime.now()
     delta = date_obj - date_now
@@ -48,16 +48,16 @@ async def timer_call(context: ContextTypes.DEFAULT_TYPE):
     job = context.job
     await context.bot.send_message(
         chat_id=job.chat_id,
-        text=job.data['message']  
+        text=job.data['message']
     )
 
     id_timer = job.data['id_timer']
-    jobs = context.job_queue.get_jobs_by_name('job_{id_timer}')
+    jobs = context.job_queue.get_jobs_by_name(f'job_{id_timer}')
     for job in jobs:
         job.schedule_removal()
 
     point = job.data['full_date']
-    if active(id_timer):
+    if await active(id_timer):
         logger.info(f'Таймер {job.data['message']} пользователя {job.chat_id} сработал')
     
 
@@ -66,9 +66,9 @@ async def counter(context: CallbackContext):
     date:datetime.datetime = job.data['full_date']
     chat_id = job.chat_id 
        
-    if date > datetime.datetime.now():#если позже
+    if date > datetime.datetime.now():#будущее
         difference = date - datetime.datetime.now()
-        day_before = difference.days
+        day_before = difference.days + 1
         message = job.data['message']
         await context.bot.send_message(
         chat_id=chat_id,
@@ -76,6 +76,7 @@ async def counter(context: CallbackContext):
     else:
         difference = datetime.datetime.now() - date
         day_after = difference.days
+        message = job.data['message']
         await context.bot.send_message(
         chat_id=chat_id,
         text=f'С {message} прошло {day_after} дней.')

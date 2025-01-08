@@ -1,6 +1,6 @@
 import logging
 import os
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup 
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -17,7 +17,7 @@ from telegram.ext import (
 import datetime
 import pytz
 
-from bd import create_user, create_timer
+from bd import create_user, create_timer, get_one_timers
 from states import MAINMENU, SETTIME, GETDATE, GETTIME, GETMESS, CHOICE
 from all_jobs import send_all_notif
 from start import start
@@ -70,7 +70,7 @@ async def get_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat_id=update.effective_chat.id,
         text="Введите сообщение для таймера или пропустите (/skip)",
     )
-    return GETMESS 
+    return GETMESS
 
 
 async def skip_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -78,64 +78,60 @@ async def skip_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["full_date"] = full_date
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Введите сообщение для таймера или пропустите (/skip)"  
+        text="Введите сообщение для таймера или пропустите (/skip)",
     )
     return GETMESS
 
 
 async def get_mess(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = update.effective_message.text
-    context.user_data['message'] = message  
+    context.user_data["message"] = message
     keyboard = [
-    [
-        InlineKeyboardButton('Добавить отсчет', callback_data='yes')
-    ],
-    [
-        InlineKeyboardButton('пропустить', callback_data='no')
-    ]
+        [InlineKeyboardButton("Добавить отсчет", callback_data="yes")],
+        [InlineKeyboardButton("пропустить", callback_data="no")],
     ]
     markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text="Желаете ли вы выбрать время для ежедневного отсчета? (Бот будет присылать количество дней от/до даты в выбранное вами время.)",
-        reply_markup=markup
+        reply_markup=markup,
     )
 
     return CHOICE
 
 
 async def skip_mess(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message = 'Ваш таймер истек'
-    context.user_data['message'] = message  
+    date = await get_one_timers(update.effective_user.id)
+    message = f"{date}"
+    context.user_data["message"] = message
     keyboard = [
-    [
-        InlineKeyboardButton('Добавить отсчет', callback_data='yes')
-    ],
-    [
-        InlineKeyboardButton('пропустить', callback_data='no')
-    ]
+        [InlineKeyboardButton("Добавить отсчет", callback_data="yes")],
+        [InlineKeyboardButton("пропустить", callback_data="no")],
     ]
     markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text="Желаете ли вы выбрать время для ежедневного отсчета? (Бот будет присылать количество дней от/до даты в выбранное вами время.)",
-        reply_markup=markup
+        reply_markup=markup,
     )
     return CHOICE
+
 
 async def choice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    if query.data == 'yes':
-        await query.edit_message_text(text='Напишите во сколько вы хотите получать ежедневное уведомление?')
+    if query.data == "yes":
+        await query.edit_message_text(
+            text="Напишите во сколько вы хотите получать ежедневное уведомление?"
+        )
     else:
-        time = '12:00'
+        time = "12:00"
         context.user_data["time"] = time
         return await put_timer_to_bd(update, context)
-    
 
-async def get_time_notif(update: Update, context: ContextTypes.DEFAULT_TYPE): #жалуется на тайм 
+
+async def get_time_notif(update: Update, context: ContextTypes.DEFAULT_TYPE):  
     time = update.effective_message.text
     time = time[:2] + ":" + time[-2:]
     time = time + ":" + "00"
@@ -148,28 +144,31 @@ async def get_time_notif(update: Update, context: ContextTypes.DEFAULT_TYPE): #�
 
 
 async def put_timer_to_bd(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message = context.user_data['message']
+    message = context.user_data["message"]
     full_date = context.user_data.get("full_date")
-    id_timer = create_timer(update.effective_user.id, full_date, message)
+    id_timer = await create_timer(update.effective_user.id, full_date, message)
     await context.bot.send_message(
         chat_id=update.effective_chat.id, text="Ваш таймер успешно добавлен"
     )
     point = datetime.datetime.strptime(full_date, "%Y-%m-%d %H:%M:%S")
+
     context.job_queue.run_once(
         timer_call,
         point,
-        data={
-            "full_date": point,
-            "message": message,
-            'id_timer': id_timer
-        },
+        data={"full_date": point, "message": message, "id_timer": id_timer},
         chat_id=update.effective_user.id,
     )
-    time_lst = list(map(int, context.user_data["time"].split(':')))
-    time = datetime.time(hour=time_lst[0], minute=time_lst[1], tzinfo=pytz.timezone('Etc/GMT-3'))
-    
-    context.job_queue.run_daily(counter, time, data={"full_date": point, 'message': message}, chat_id=update.effective_user.id, name=f'job_{id_timer}')
-    
-    
-    
+    time_lst = list(map(int, context.user_data["time"].split(":")))
+    time = datetime.time(
+        hour=time_lst[0], minute=time_lst[1], tzinfo=pytz.timezone("Etc/GMT-3")
+    )
+
+    context.job_queue.run_daily(
+        counter,
+        time,
+        data={"full_date": point, "message": message},
+        chat_id=update.effective_user.id,
+        name=f"job_{id_timer}",
+    )
+
     return await start(update, context)
