@@ -1,10 +1,10 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
+from telegram.ext import ContextTypes
 
 import datetime
 
 from states import MAINMENU
-from bd import create_user, create_timer
+from bd import create_user
 from logging_file import logger
 
 
@@ -23,11 +23,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     keyboard = [
         [InlineKeyboardButton("установить таймер", callback_data="set_timer")],
-        [InlineKeyboardButton("мои таймеры", callback_data="check")]
+        [InlineKeyboardButton("мои таймеры", callback_data="check")],
     ]
     markup = InlineKeyboardMarkup(keyboard)
 
-    if not query or query.data == 'no':
+    if not query or query.data == "no":
         await create_user(update.effective_user.id, update.effective_user.name)
         logger.info(f"Пользователь {update.effective_user.id} запустил бота")
         await context.bot.send_message(
