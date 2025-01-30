@@ -24,7 +24,8 @@ from set_time import (
     skip_time,
 )
 from start import start
-from states import CHOICE, GETDATE, GETMESS, GETTIME, MAINMENU
+from states import CHOICE, GETDATE, GETMESS, GETTIME, MAINMENU, CHECK
+from delete_timer import delete_timer, confirm_delete_timer
 import asyncio
 
 load_dotenv()
@@ -36,12 +37,14 @@ def main():
         entry_points=[CommandHandler("start", start)],
         states={
             MAINMENU: [
-                CommandHandler('set_time', set_time),
-                CommandHandler('check', check)
+                CallbackQueryHandler(set_time, pattern='^set_timer$'),
+                CallbackQueryHandler(check, pattern='^check$'),
+                CallbackQueryHandler(start, pattern='^back$')
             ],
-            GETDATE: [MessageHandler(filters.Regex(regular_data), get_date)],
-            GETTIME: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_time), CommandHandler('skip', skip_time)],
-            GETMESS: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_mess), CommandHandler('skip', skip_mess)],
+            CHECK: [CallbackQueryHandler(start, pattern='^back$'), CallbackQueryHandler(delete_timer, pattern='remove'), CallbackQueryHandler(check, pattern='cancel'), CallbackQueryHandler(confirm_delete_timer)],
+            GETDATE: [MessageHandler(filters.Regex(regular_data), get_date), CallbackQueryHandler(GETTIME, pattern='^skip$')],
+            GETTIME: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_time), CallbackQueryHandler(skip_time, pattern='^skip')],
+            GETMESS: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_mess), CallbackQueryHandler(skip_mess, pattern='^skip_time$')],
             CHOICE: [CallbackQueryHandler(choice),MessageHandler(filters.TEXT & ~filters.COMMAND, get_time_notif)]
         },
         fallbacks=[CommandHandler("start", start)],

@@ -52,7 +52,7 @@ async def timer_call(context: ContextTypes.DEFAULT_TYPE):
     )
 
     id_timer = job.data['id_timer']
-    jobs = context.job_queue.get_jobs_by_name(f'job_{id_timer}')
+    jobs = context.job_queue.get_jobs_by_name(f'job_{id_timer}') # по аналогии + дать run_once нэймы 
     for job in jobs:
         job.schedule_removal()
 
@@ -64,7 +64,7 @@ async def timer_call(context: ContextTypes.DEFAULT_TYPE):
 async def counter(context: CallbackContext):
     job = context.job
     date:datetime.datetime = job.data['full_date']
-    chat_id = job.chat_id 
+    chat_id = job.chat_id
        
     if date > datetime.datetime.now():#будущее
         difference = date - datetime.datetime.now()

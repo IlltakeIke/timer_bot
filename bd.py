@@ -36,7 +36,7 @@ async def create_user(id_tg, name):
         await db.commit()
     await db.close()
 
-async def create_timer(id_tg, timer_datetime, message): #асинхронить дальше
+async def create_timer(id_tg, timer_datetime, message): 
     db = await aiosqlite.connect("timer_bot.db")
     data_cur = await db.execute(f"INSERT INTO timers (datetime, user_id, message) VALUES ('{timer_datetime}', {id_tg}, '{message}')")
     id_timer = data_cur.lastrowid # он ноет, что int не может быть в await 
@@ -82,4 +82,25 @@ async def check_timers(id_user):
     user_timers = await timer_cur.fetchall()
     await db.commit()
     await db.close()
+    return user_timers 
+'''все таймеры чела которые в будущем (active=1) -> пихаем их в кнопки -> 'нажмите на таймер чтоб удалить' -> проверка точно ли да 
+
+сделать всё в одном сообщении и меняются только кнопки, сообще чувака удаляются
+'''
+
+async def get_all_timers_by_user(id_user):
+    db = await aiosqlite.connect("timer_bot.db")
+    timer_cur = await db.cursor()
+    await timer_cur.execute(f'SELECT message, id, datetime FROM timers WHERE user_id = {id_user}')
+    user_timers = await timer_cur.fetchall()
+    await db.commit()
+    await db.close()
     return user_timers
+
+async def remove_timer(id_timer):
+    db = await aiosqlite.connect("timer_bot.db")
+    timer_cur = await db.cursor()
+    await timer_cur.execute(f'DELETE FROM timers WHERE id = {id_timer}')
+    await db.commit()
+    await db.close()
+
