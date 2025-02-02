@@ -22,6 +22,7 @@ async def create_table():
                                                 message TEXT,
                                                 active INTEGER DEFAULT 1,
                                                 notif INTEGER, 
+                                                rd_time TIME,
                                                 FOREIGN KEY (user_id) REFERENCES users (id)
                                                     )""")  # 24 строка это чойз
 
@@ -39,10 +40,10 @@ async def create_user(id_tg, name):
     await db.close()
 
 
-async def create_timer(id_tg, timer_datetime, message):
+async def create_timer(id_tg, timer_datetime, message, rd_time):
     db = await aiosqlite.connect("timer_bot.db")
     data_cur = await db.execute(
-        f"INSERT INTO timers (datetime, user_id, message) VALUES ('{timer_datetime}', {id_tg}, '{message}')"
+        f"INSERT INTO timers (datetime, user_id, message, rd_time) VALUES ('{timer_datetime}', {id_tg}, '{message}', '{rd_time}')"
     )
     id_timer = data_cur.lastrowid  # он ноет, что int не может быть в await
     # id_timer = await data_cur.lastrowid
@@ -63,6 +64,13 @@ async def update_users(user_id):
 async def get_all_timers():
     db = await aiosqlite.connect("timer_bot.db")
     user_cur = await db.execute("SELECT user_id, datetime FROM timers")
+    users_data = await user_cur.fetchall()  # в юзере картеж(0,)
+    await db.close()
+    return users_data
+
+async def get_all_timers_for_job():
+    db = await aiosqlite.connect("timer_bot.db")
+    user_cur = await db.execute("SELECT * FROM timers")
     users_data = await user_cur.fetchall()  # в юзере картеж(0,)
     await db.close()
     return users_data

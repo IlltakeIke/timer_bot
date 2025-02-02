@@ -5,7 +5,7 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from bd import active, get_all_timers, get_one_timers
+from bd import active, get_all_timers, get_one_timers, remove_timer
 from logging_file import logger
 
 
@@ -45,6 +45,8 @@ async def timer_call(context: ContextTypes.DEFAULT_TYPE):
     if await active(id_timer):
         logger.info(f"Таймер {job.data['message']} пользователя {job.chat_id} сработал")
 
+    await remove_timer(id_timer)
+
 
 async def counter(context: CallbackContext):
     job = context.job
@@ -65,3 +67,5 @@ async def counter(context: CallbackContext):
         await context.bot.send_message(
             chat_id=chat_id, text=f"С {message} прошло {day_after} дней."
         )
+
+        

@@ -169,7 +169,10 @@ async def get_time_notif(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def put_timer_to_bd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = context.user_data["message"]
     full_date = context.user_data.get("full_date")
-    id_timer = await create_timer(update.effective_user.id, full_date, message)
+
+    
+    id_timer = await create_timer(update.effective_user.id, full_date, message, context.user_data["time_daily"])
+
     await context.bot.send_message(
         chat_id=update.effective_chat.id, text="Ваш таймер успешно добавлен ✅"
     )

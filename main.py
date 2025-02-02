@@ -23,10 +23,11 @@ from set_time import (
     skip_mess,
     skip_time,
 )
-from start import start
+from start import start, run_all_jobs
 from states import CHOICE, GETDATE, GETMESS, GETTIME, MAINMENU, CHECK
 from delete_timer import delete_timer, confirm_delete_timer
 import asyncio
+import datetime
 
 load_dotenv()
 
@@ -54,7 +55,7 @@ def main():
     # ПРОВЕРКИ КАЖДЫЕ 12.00 
     # application.job_queue.run_daily(send_all_notif, time=datetime.time(hour=12, tzinfo=pytz.timezone('Etc/GMT-3')))
     # application.job_queue.run_once(send_all_notif, datetime.timedelta(seconds=5))
-
+    application.job_queue.run_once(run_all_jobs, datetime.timedelta(seconds=1))
 
     application.run_polling()
 
